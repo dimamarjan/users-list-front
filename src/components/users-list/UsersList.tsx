@@ -77,9 +77,15 @@ export default function UsersList() {
     const sortQuery = (a: User, b: User) => (a.rank > b.rank ? 1 : -1);
 
     useEffect(() => {
-        api.getUsersList().then((usersData: User[] | undefined) => {
-            if (usersData?.length) return setUsersList(usersData);
-        });
+        let active: boolean = true;
+        api.getUsersList()
+            .then((usersData: User[] | undefined) => {
+                if (active && usersData?.length) return setUsersList(usersData);
+            })
+            .catch((err) => console.log(err));
+        return () => {
+            active = false;
+        };
     }, []);
 
     return (
